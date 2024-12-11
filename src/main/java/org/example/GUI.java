@@ -1,4 +1,5 @@
 package org.example;
+import org.example.Backend.Login;
 import org.example.Backend.User;
 import org.example.Backend.UserService;
 import javax.swing.*;
@@ -35,6 +36,12 @@ public class GUI extends JFrame{
                 User user = new User(username,usernumber,password,mail);
                 UserService userService = new UserService();
                 userService.registerUser(user);
+
+                dispose();
+                SwingUtilities.invokeLater(()->{
+                    Login login = new Login();
+                    login.setVisible(true);
+                });
             }
         });
     }
