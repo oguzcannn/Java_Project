@@ -1,7 +1,7 @@
 package org.example;
 
 
-import org.example.Backend.Login;
+import org.example.Frontend.Login;
 
 import javax.swing.*;
 

@@ -1,5 +1,4 @@
-package org.example;
-import org.example.Backend.Login;
+package org.example.Frontend;
 import org.example.Backend.User;
 import org.example.Backend.UserService;
 import javax.swing.*;

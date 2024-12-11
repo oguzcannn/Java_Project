@@ -1,6 +1,6 @@
-package org.example.Backend;
+package org.example.Frontend;
 
-import org.example.GUI;
+import org.example.Backend.UserService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
