@@ -35,7 +35,6 @@ public class GUI extends JFrame{
                 User user = new User(username,usernumber,password,mail);
                 UserService userService = new UserService();
                 userService.registerUser(user);
-                System.out.println("Kullanıcı eklendi.");
             }
         });
     }
