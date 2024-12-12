@@ -9,7 +9,7 @@ public class MainPage extends JFrame{
     private JButton addFriendButton;
     private JPanel MainPagePanel;
 
-    public MainPage (){
+    public MainPage (String userName){
         add(MainPagePanel);
         setSize(400,500);
         setTitle("N'aber");
@@ -19,7 +19,9 @@ public class MainPage extends JFrame{
         settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                dispose();
+                Settings settings = new Settings(userName);
+                settings.setVisible(true);
             }
         });
         addFriendButton.addActionListener(new ActionListener() {
@@ -28,6 +30,7 @@ public class MainPage extends JFrame{
 
             }
         });
+
 
         FriendList.addMouseListener(new MouseAdapter() {
             @Override

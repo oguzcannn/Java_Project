@@ -56,5 +56,20 @@ public class UserService {
         Document user = userCollection.find(query).first();
         return user != null; // Kullanıcı bulunduysa true döner
     }
-
+    public void changePassword(String userName, String newPassword){
+        Document query = new Document("username", userName);
+        Document update = new Document("$set", new Document("password", newPassword));
+        userCollection.updateOne(query, update);
+        System.out.println("Şifre başarıyla güncellendi!");
+    }
+    public boolean deleteUser(String username) {
+        Document query = new Document("username", username);
+        Document user = userCollection.find(query).first();
+        if (user != null) {
+            userCollection.deleteOne(query);
+            System.out.println("Kullanıcı başarıyla silindi!");
+            return true;
+        }
+        return false;  // Kullanıcı bulunamadıysa false döner
+    }
 }

@@ -30,7 +30,7 @@ public class Login extends JFrame {
                 if (userService.loginUser(userName, userPassword)){
                     dispose();
                     SwingUtilities.invokeLater(()->{
-                        MainPage mainPage = new MainPage();
+                        MainPage mainPage = new MainPage(userName);
                         mainPage.setVisible(true);
                     });
                 }
