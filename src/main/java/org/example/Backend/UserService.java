@@ -1,5 +1,6 @@
 package org.example.Backend;
-
+import java.util.ArrayList;
+import java.util.List;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -50,7 +51,11 @@ public class UserService {
         userCollection.insertOne(doc);
         System.out.println("Kullanıcı başarıyla kaydedildi!");
     }
-
+    public boolean isUsernameExists(String username) {
+        Document query = new Document("username", username);
+        Document user = userCollection.find(query).first();
+        return user != null; // Kullanıcı bulunduysa true döner
+    }
     public boolean loginUser(String username, String password) {
         Document query = new Document("username", username).append("password", password);
         Document user = userCollection.find(query).first();
@@ -71,5 +76,22 @@ public class UserService {
             return true;
         }
         return false;  // Kullanıcı bulunamadıysa false döner
+    }
+    public void addFriend(String currentUser, String friendUsername) {
+        Document query = new Document("username", currentUser);
+        Document update = new Document("$addToSet", new Document("friends", friendUsername));
+        userCollection.updateOne(query, update);
+        System.out.println(friendUsername + " başarıyla arkadaş olarak eklendi!");
+    }
+
+    public List<String> getFriendList(String currentUser) {
+        Document query = new Document("username", currentUser);
+        Document user = userCollection.find(query).first();
+
+        if (user != null && user.containsKey("friends")) {
+            return (List<String>) user.get("friends");
+        }
+
+        return new ArrayList<>(); // Kullanıcının arkadaş listesi yoksa boş liste döner
     }
 }
