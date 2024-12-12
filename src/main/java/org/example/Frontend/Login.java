@@ -28,7 +28,11 @@ public class Login extends JFrame {
                 userPassword = textField2.getText();
                 UserService userService = new UserService();
                 if (userService.loginUser(userName, userPassword)){
-                    JOptionPane.showMessageDialog(null, "kullanıcı bulundıu", "hata", JOptionPane.PLAIN_MESSAGE);
+                    dispose();
+                    SwingUtilities.invokeLater(()->{
+                        MainPage mainPage = new MainPage();
+                        mainPage.setVisible(true);
+                    });
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "kullanıcı bulunamadı", "hata", JOptionPane.PLAIN_MESSAGE);

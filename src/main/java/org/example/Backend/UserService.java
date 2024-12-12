@@ -56,4 +56,5 @@ public class UserService {
         Document user = userCollection.find(query).first();
         return user != null; // Kullanıcı bulunduysa true döner
     }
+
 }
