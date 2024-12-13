@@ -91,9 +91,15 @@ public class MainPage extends JFrame{
                 if (index >= 0) {
                     // Tıklanan arkadaşın ismini alıyoruz
                     String selectedFriend = FriendList.getModel().getElementAt(index);
+                    ChatService chatService = new ChatService();
+                    // ChatService kullanarak bu iki kullanıcı arasındaki sohbeti buluyoruz
+                    String chatId = chatService.findChatIdByParticipants(userName, selectedFriend);
 
-                    Chat chat = new Chat(selectedFriend, "675ad2689aa21b0fd86c16c4", "CHAT-1734081574545");
+                    // Eğer sohbet zaten varsa, sohbeti açıyoruz
+
+                    Chat chat = new Chat(selectedFriend, userName, chatId);
                     chat.setVisible(true);
+
                 }
             }
         });
