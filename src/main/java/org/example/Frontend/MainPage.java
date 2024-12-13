@@ -1,12 +1,13 @@
 package org.example.Frontend;
 
 import org.example.Backend.UserService;
-import java.util.List;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class MainPage extends JFrame{
     private JButton settingsButton;
@@ -46,20 +47,8 @@ public class MainPage extends JFrame{
                 settings.setVisible(true);
             }
         });
-        addFriendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
 
 
-        FriendList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-            }
-        });
         addFriendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,6 +60,7 @@ public class MainPage extends JFrame{
                     return;
                 }
                 userService.addFriend(userName,friend);
+                userService.addFriend(friend,userName);
                 friendTextField.setText("");
             }
         });
