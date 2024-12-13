@@ -1,8 +1,8 @@
 package org.example.Frontend;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.example.Backend.ChatService;
 import org.example.Backend.UserService;
 
@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 public class MainPage extends JFrame{
     private JButton settingsButton;
@@ -19,6 +18,7 @@ public class MainPage extends JFrame{
     private JButton addFriendButton;
     private JPanel MainPagePanel;
     private JTextField friendTextField;
+    private List<String> friends;
 
     public MainPage (String userName){
         add(MainPagePanel);
@@ -28,8 +28,8 @@ public class MainPage extends JFrame{
         // UserService örneği oluşturuluyor
         UserService userService = new UserService();
 
-        // Arkadaş listesi alınıyor
-        List<String> friends = userService.getFriendList(userName);
+        // Arkadaş listesini sınıfın üyesine yükleyin.
+        friends = new CopyOnWriteArrayList<>(userService.getFriendList(userName));
 
         // List modelini oluşturuyoruz
         DefaultListModel<String> listModel = new DefaultListModel<>();
@@ -42,6 +42,36 @@ public class MainPage extends JFrame{
         // FriendList'e DefaultListModel set ediliyor
         FriendList.setModel(listModel);
 
+        // Timer içinde listeyi güncelleyin
+        Timer timer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Yeni arkadaş listesini alıyoruz
+                List<String> updatedFriends = userService.getFriendList(userName);
+
+                // Yeni arkadaşları ekliyoruz
+                for (String friend : updatedFriends) {
+                    if (!listModel.contains(friend)) {
+                        listModel.addElement(friend);
+                    }
+                }
+
+                // Silinen arkadaşları listeden çıkarıyoruz
+                for (String friend : friends) {
+                    if (!updatedFriends.contains(friend)) {
+                        listModel.removeElement(friend);
+                    }
+                }
+
+                // Arkadaş listesini güncelliyoruz
+                friends.clear();
+                friends.addAll(updatedFriends);
+            }
+        });
+
+
+        // Timer başlatılıyor
+        timer.start();
 
         settingsButton.addActionListener(new ActionListener() {
             @Override
