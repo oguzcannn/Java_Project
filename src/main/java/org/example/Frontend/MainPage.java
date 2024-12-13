@@ -69,11 +69,11 @@ public class MainPage extends JFrame{
             public void mouseClicked(MouseEvent e) {
                 // Tıklanan index'i alıyoruz
                 int index = FriendList.locationToIndex(e.getPoint());
-
                 // Eğer tıklama geçerli bir index'e denk geliyorsa
                 if (index >= 0) {
                     // Tıklanan arkadaşın ismini alıyoruz
                     String selectedFriend = FriendList.getModel().getElementAt(index);
+
                     // Seçilen arkadaşın ismini bir dialogda gösteriyoruz
                     JOptionPane.showMessageDialog(null, "Tıkladığınız kullanıcı: " + selectedFriend, "Bilgi", JOptionPane.PLAIN_MESSAGE);
                 }
