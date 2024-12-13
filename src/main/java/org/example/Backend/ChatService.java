@@ -5,7 +5,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import org.bson.Document;
-
+import java.util.function.Consumer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -44,17 +44,7 @@ public class ChatService {
         System.out.println("Mesaj eklendi: " + message.getMessage_id());
     }
 
-    public void listenForChanges() {
-        executor.submit(() -> {
-            ChangeStreamIterable<Document> changeStream = chatCollection.watch();
-            for (ChangeStreamDocument<Document> change : changeStream) {
-                Document fullDocument = change.getFullDocument();
-                if (fullDocument != null) {
-                    System.out.println("Değişiklik algılandı: " + fullDocument.toJson());
-                }
-            }
-        });
-    }
+
 
     public List<Message> getMessages(String chatId) {
         Document chatDoc = chatCollection.find(Filters.eq("chatId", chatId)).first();
@@ -87,6 +77,28 @@ public class ChatService {
             return null;
         }
     }
+
+    public void listenForChanges(String chatId, Consumer<Message> onNewMessage) {
+        executor.submit(() -> {
+            ChangeStreamIterable<Document> changeStream = chatCollection.watch();
+            for (ChangeStreamDocument<Document> change : changeStream) {
+                Document fullDocument = change.getFullDocument();
+                if (fullDocument != null && chatId.equals(fullDocument.getString("chatId"))) {
+                    List<Document> messages = (List<Document>) fullDocument.get("messages");
+                    if (messages != null && !messages.isEmpty()) {
+                        Document lastMessageDoc = messages.get(messages.size() - 1);
+                        Message newMessage = new Message(
+                                lastMessageDoc.getString("senderId"),
+                                lastMessageDoc.getString("receiverId"),
+                                lastMessageDoc.getString("messageContent")
+                        );
+                        onNewMessage.accept(newMessage);
+                    }
+                }
+            }
+        });
+    }
+
 
 
 

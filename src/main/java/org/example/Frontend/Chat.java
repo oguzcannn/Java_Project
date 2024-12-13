@@ -17,6 +17,7 @@ public class Chat extends JFrame {
     private final ChatService chatService;
     private final String chatId;
     private final DefaultListModel<String> listModel;
+    private int previousMessageCount = 0;  // Önceki mesaj sayısını tutacak
 
     public Chat(String friend, String currentUser, String chatId) {
         add(messagesPanel);
@@ -28,8 +29,29 @@ public class Chat extends JFrame {
         this.chatId = chatId;
         this.listModel = new DefaultListModel<>();
         messagesList.setModel(listModel);
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int currentMessageCount = chatService.getMessages(chatId).size();  // Mevcut mesaj sayısı
 
-        loadMessages();
+                if (currentMessageCount > previousMessageCount) {
+                    // Yeni mesaj eklenmişse
+                    List<Message> newMessages = chatService.getMessages(chatId);
+                    for (int i = previousMessageCount; i < currentMessageCount; i++) {
+                        Message msg = newMessages.get(i);
+                        String formattedMessage = (msg.getSender_id().equals(currentUser) ? "You: " : "Friend: ") + msg.getMessage_content();
+                        listModel.addElement(formattedMessage);  // Yalnızca yeni mesajları ekle
+                    }
+                    previousMessageCount = currentMessageCount;  // Önceki mesaj sayısını güncelle
+                }
+            }
+        });
+        // Timer başlatılıyor
+        timer.start();
+
+
+        // Yeni mesajları dinlemek için bir değişiklik dinleyici başlat
+        startListeningForMessages(currentUser, friend);
 
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -51,5 +73,14 @@ public class Chat extends JFrame {
             String formattedMessage = (msg.getSender_id().equals(chatId) ? "You: " : "Friend: ") + msg.getMessage_content();
             listModel.addElement(formattedMessage);
         }
+    }
+
+    private void startListeningForMessages(String currentUser, String friend) {
+        new Thread(() -> chatService.listenForChanges(chatId, newMessage -> {
+            SwingUtilities.invokeLater(() -> {
+                String formattedMessage = (newMessage.getSender_id().equals(currentUser) ? "You: " : "Friend: ") + newMessage.getMessage_content();
+                listModel.addElement(formattedMessage);
+            });
+        })).start();
     }
 }

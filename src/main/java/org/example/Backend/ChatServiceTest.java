@@ -57,7 +57,7 @@ public class ChatServiceTest {
 
                 case 4:
                     System.out.println("Değişiklikleri dinlemeye başlıyoruz...");
-                    chatService.listenForChanges();
+                    //chatService.listenForChanges();
                     break;
 
                 case 5:
