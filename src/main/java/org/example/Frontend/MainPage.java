@@ -63,8 +63,10 @@ public class MainPage extends JFrame{
                     JOptionPane.showMessageDialog(null,"Yanlış kullanıcı adı","Hata",JOptionPane.PLAIN_MESSAGE);
                     return;
                 }
-                listModel.addElement(friend);
-                FriendList.setModel(listModel);
+                if (!listModel.contains(friend)){
+                    listModel.addElement(friend);
+                    FriendList.setModel(listModel);
+                }
 
                 List<String> participants = new ArrayList<>();
                 participants.add(userName);

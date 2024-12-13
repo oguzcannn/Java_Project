@@ -2,10 +2,13 @@ package org.example.Frontend;
 
 import org.example.Backend.ChatService;
 import org.example.Backend.Message;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class Chat extends JFrame {
@@ -13,9 +16,7 @@ public class Chat extends JFrame {
     private JPanel messagesPanel;
     private JButton sendButton;
     private JList<String> messagesList;
-
-    private final ChatService chatService;
-    private final String chatId;
+    private JScrollPane messagesScrollPane;
     private final DefaultListModel<String> listModel;
     private int previousMessageCount = 0;  // Önceki mesaj sayısını tutacak
 
@@ -25,8 +26,8 @@ public class Chat extends JFrame {
         setTitle("Chat with: " + friend);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        this.chatService = new ChatService();
-        this.chatId = chatId;
+        ChatService chatService = new ChatService();
+
         this.listModel = new DefaultListModel<>();
         messagesList.setModel(listModel);
         Timer timer = new Timer(1000, new ActionListener() {
@@ -41,9 +42,9 @@ public class Chat extends JFrame {
                         Message msg = newMessages.get(i);
                         String formattedMessage = (msg.getSender_id().equals(currentUser) ? "You: " : "Friend: ") + msg.getMessage_content();
                         listModel.addElement(formattedMessage);  // Yalnızca yeni mesajları ekle
+                        scrollToBottom();
                     }
                     previousMessageCount = currentMessageCount;  // Önceki mesaj sayısını güncelle
-                    messagesInput.setText("");
                 }
             }
         });
@@ -57,7 +58,39 @@ public class Chat extends JFrame {
                 if (!messageContent.isEmpty()) {
                     Message message = new Message(currentUser, friend, messageContent);
                     chatService.addMessage(chatId, message);
+                    messagesInput.setText("");
                 }
+            }
+        });
+
+        messagesInput.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) { // Sadece Enter tuşunu kontrol ediyoruz
+                    String messageContent = messagesInput.getText();
+                    if (!messageContent.isEmpty()) {
+                        Message message = new Message(currentUser, friend, messageContent);
+                        chatService.addMessage(chatId, message);
+                        messagesInput.setText("");
+                        scrollToBottom();
+                    }
+                }
+            }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                timer.stop(); // Timer'ı durdur
+                 }
+        });
+    }
+
+    private void scrollToBottom() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JScrollBar verticalScrollBar = messagesScrollPane.getVerticalScrollBar();
+                verticalScrollBar.setValue(verticalScrollBar.getMaximum());
             }
         });
     }
