@@ -1,5 +1,9 @@
 package org.example.Frontend;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
+import org.example.Backend.ChatService;
 import org.example.Backend.UserService;
 
 import javax.swing.*;
@@ -61,6 +65,17 @@ public class MainPage extends JFrame{
                 }
                 listModel.addElement(friend);
                 FriendList.setModel(listModel);
+
+                List<String> participants = new ArrayList<>();
+                participants.add(userName);
+                participants.add(friend);
+
+                // ChatService kullanarak sohbet oluşturuluyor
+                ChatService chatService = new ChatService();
+                String chatId = chatService.createChat(participants);
+                if (chatId != null) {
+                    System.out.println("Sohbet başarıyla oluşturuldu");
+                }
 
                 userService.addFriend(userName,friend);
                 userService.addFriend(friend,userName);

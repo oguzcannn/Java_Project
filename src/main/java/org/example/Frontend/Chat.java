@@ -43,15 +43,12 @@ public class Chat extends JFrame {
                         listModel.addElement(formattedMessage);  // Yalnızca yeni mesajları ekle
                     }
                     previousMessageCount = currentMessageCount;  // Önceki mesaj sayısını güncelle
+                    messagesInput.setText("");
                 }
             }
         });
         // Timer başlatılıyor
         timer.start();
-
-
-        // Yeni mesajları dinlemek için bir değişiklik dinleyici başlat
-        startListeningForMessages(currentUser, friend);
 
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -60,27 +57,8 @@ public class Chat extends JFrame {
                 if (!messageContent.isEmpty()) {
                     Message message = new Message(currentUser, friend, messageContent);
                     chatService.addMessage(chatId, message);
-                    listModel.addElement("You: " + messageContent);
-                    messagesInput.setText("");
                 }
             }
         });
-    }
-
-    private void loadMessages() {
-        List<Message> messages = chatService.getMessages(chatId);
-        for (Message msg : messages) {
-            String formattedMessage = (msg.getSender_id().equals(chatId) ? "You: " : "Friend: ") + msg.getMessage_content();
-            listModel.addElement(formattedMessage);
-        }
-    }
-
-    private void startListeningForMessages(String currentUser, String friend) {
-        new Thread(() -> chatService.listenForChanges(chatId, newMessage -> {
-            SwingUtilities.invokeLater(() -> {
-                String formattedMessage = (newMessage.getSender_id().equals(currentUser) ? "You: " : "Friend: ") + newMessage.getMessage_content();
-                listModel.addElement(formattedMessage);
-            });
-        })).start();
     }
 }

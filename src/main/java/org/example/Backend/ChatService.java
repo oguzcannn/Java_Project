@@ -1,4 +1,7 @@
 package org.example.Backend;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
@@ -24,13 +27,27 @@ public class ChatService {
     }
 
     public String createChat(List<String> participants) {
-        String chatId = "CHAT-" + System.currentTimeMillis();
+        // Katılımcıları sırasız hale getirmek için sıralıyoruz
+        Collections.sort(participants);  // Katılımcıları sıralıyoruz
+
+        // Bu iki kullanıcı arasındaki sohbeti arıyoruz
+        String chatId = findChatIdByParticipants(participants.get(0), participants.get(1));
+
+        if (chatId != null) {
+            return chatId;  // Eğer sohbet zaten varsa mevcut chatId'yi döndürür
+        }
+
+        // Yeni bir sohbet oluşturuluyor
+        chatId = "CHAT-" + System.currentTimeMillis();
         Document chatDoc = new Document("chatId", chatId)
-                .append("participants", participants)
+                .append("participants", participants)  // Katılımcıları _id'ler ile kaydediyoruz
                 .append("messages", new ArrayList<>());
+
+        // Yeni sohbet veritabanına ekleniyor
         chatCollection.insertOne(chatDoc);
         System.out.println("Yeni bir sohbet oluşturuldu: " + chatId);
-        return chatId;
+
+        return chatId;  // Yeni chatId döndürülür
     }
 
     public void addMessage(String chatId, Message message) {
@@ -43,7 +60,6 @@ public class ChatService {
         chatCollection.updateOne(Filters.eq("chatId", chatId), Updates.push("messages", messageDoc));
         System.out.println("Mesaj eklendi: " + message.getMessage_id());
     }
-
 
 
     public List<Message> getMessages(String chatId) {
@@ -65,41 +81,22 @@ public class ChatService {
     }
 
     public String findChatIdByParticipants(String userId1, String userId2) {
-        Document chatDoc = chatCollection.find(Filters.and(
-                Filters.all("participants", userId1),
-                Filters.all("participants", userId2)
-        )).first();
+        // Katılımcıları sırasız hale getirmek için sıralıyoruz
+        List<String> participants = new ArrayList<>();
+        participants.add(userId1);
+        participants.add(userId2);
+        Collections.sort(participants);  // Katılımcıları sıralıyoruz, bu sayede sıralama önemli olmuyor
+
+        // Şimdi sıralı haliyle sohbeti arıyoruz
+        Document chatDoc = chatCollection.find(Filters.all("participants", participants)).first();
 
         if (chatDoc != null) {
-            return chatDoc.getString("chatId");
+            return chatDoc.getString("chatId");  // Eğer sohbet varsa, chatId döndürülür
         } else {
             System.out.println("Bu kullanıcılar arasında bir sohbet bulunamadı.");
-            return null;
+            return null;  // Eğer sohbet yoksa, null döndürülür
         }
     }
-
-    public void listenForChanges(String chatId, Consumer<Message> onNewMessage) {
-        executor.submit(() -> {
-            ChangeStreamIterable<Document> changeStream = chatCollection.watch();
-            for (ChangeStreamDocument<Document> change : changeStream) {
-                Document fullDocument = change.getFullDocument();
-                if (fullDocument != null && chatId.equals(fullDocument.getString("chatId"))) {
-                    List<Document> messages = (List<Document>) fullDocument.get("messages");
-                    if (messages != null && !messages.isEmpty()) {
-                        Document lastMessageDoc = messages.get(messages.size() - 1);
-                        Message newMessage = new Message(
-                                lastMessageDoc.getString("senderId"),
-                                lastMessageDoc.getString("receiverId"),
-                                lastMessageDoc.getString("messageContent")
-                        );
-                        onNewMessage.accept(newMessage);
-                    }
-                }
-            }
-        });
-    }
-
-
 
 
 }
