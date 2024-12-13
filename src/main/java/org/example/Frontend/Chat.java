@@ -3,6 +3,8 @@ package org.example.Frontend;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Chat extends JFrame {
     private JTextField messagesInput;
@@ -36,9 +38,18 @@ public class Chat extends JFrame {
 
             }
         });
+
+
+        messagesInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String message = messagesInput.getText();
+                if (!message.isEmpty()){
+                    listModel.addElement(message);
+                    messagesList.setModel(listModel);
+                    messagesInput.setText("");
+                }
+            }
+        });
     }
-
-
-
-
 }
