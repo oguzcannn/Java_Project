@@ -77,7 +77,7 @@ public class MainPage extends JFrame{
                     // Tıklanan arkadaşın ismini alıyoruz
                     String selectedFriend = FriendList.getModel().getElementAt(index);
 
-                    Chat chat = new Chat(selectedFriend);
+                    Chat chat = new Chat(selectedFriend, "675ad2689aa21b0fd86c16c4", "CHAT-1734081574545");
                     chat.setVisible(true);
                 }
             }
