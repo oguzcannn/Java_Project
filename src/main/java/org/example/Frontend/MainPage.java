@@ -59,6 +59,9 @@ public class MainPage extends JFrame{
                     JOptionPane.showMessageDialog(null,"Yanlış kullanıcı adı","Hata",JOptionPane.PLAIN_MESSAGE);
                     return;
                 }
+                listModel.addElement(friend);
+                FriendList.setModel(listModel);
+
                 userService.addFriend(userName,friend);
                 userService.addFriend(friend,userName);
                 friendTextField.setText("");
@@ -74,8 +77,8 @@ public class MainPage extends JFrame{
                     // Tıklanan arkadaşın ismini alıyoruz
                     String selectedFriend = FriendList.getModel().getElementAt(index);
 
-                    // Seçilen arkadaşın ismini bir dialogda gösteriyoruz
-                    JOptionPane.showMessageDialog(null, "Tıkladığınız kullanıcı: " + selectedFriend, "Bilgi", JOptionPane.PLAIN_MESSAGE);
+                    Chat chat = new Chat(selectedFriend);
+                    chat.setVisible(true);
                 }
             }
         });
