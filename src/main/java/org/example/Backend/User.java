@@ -1,4 +1,16 @@
 package org.example.Backend;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+
+
 public class User {
     private String username;
     private String userNumber;
@@ -6,7 +18,7 @@ public class User {
     private String email;
     private String[] friend_id;
 
-    public User(String username, String userNumber, String password, String email ) {
+    public User(String username, String userNumber , String password, String email ) {
         this.username = username;
         this.userNumber = userNumber;
         this.password = password;
@@ -53,6 +65,43 @@ public class User {
     public void setFriend_id(String[] friend_id) {
         this.friend_id = friend_id;
     }
+
+    public void removeFriend(String friendUsername) {
+        MongoDatabase database = DatabaseConnection.getDatabase();
+        MongoCollection<Document> userCollection = database.getCollection("Users");
+        MongoCollection<Document> chatCollection = database.getCollection("Chats");
+
+        // Kullanıcı belgesini getir
+        Document userDoc = userCollection.find(Filters.eq("username", this.username)).first();
+        if (userDoc == null) {
+            System.out.println("Kullanıcı bulunamadı: " + this.username);
+            return;
+        }
+
+        // Arkadaş listesinden çıkar
+        List<String> friends = (List<String>) userDoc.get("friends");
+        if (friends != null && friends.contains(friendUsername)) {
+            friends.remove(friendUsername);
+            userCollection.updateOne(Filters.eq("username", this.username), Updates.set("friends", friends));
+            System.out.println(friendUsername + " arkadaş listesinden silindi.");
+        } else {
+            System.out.println(friendUsername + " arkadaş listenizde bulunamadı.");
+            return;
+        }
+
+        // ChatId'yi bul ve sil
+        List<String> participants = new ArrayList<>();
+        participants.add(this.username);
+        participants.add(friendUsername);
+        participants.sort(String::compareTo);
+
+        Document chatDoc = chatCollection.find(Filters.all("participants", participants)).first();
+        if (chatDoc != null) {
+            chatCollection.deleteOne(Filters.eq("chatId", chatDoc.getString("chatId")));
+            System.out.println("Chat silindi: " + chatDoc.getString("chatId"));
+        }
+    }
+
 
 }
 

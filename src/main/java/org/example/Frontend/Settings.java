@@ -14,6 +14,9 @@ public class Settings extends JFrame{
     private JPanel settingsPanel;
     private JButton changePasswordButton;
     private JButton deleteAccountButton;
+    private JTextField newusername;
+    private JButton changeUserNameBtn;
+
     public Settings(String userName){
         add(settingsPanel);
         setSize(400,400);
@@ -71,6 +74,21 @@ public class Settings extends JFrame{
                     } else {
                         JOptionPane.showMessageDialog(null, "Hesap silinirken bir hata oluştu.", "Hata", JOptionPane.ERROR_MESSAGE);
                     }
+                }
+            }
+        });
+
+
+        changeUserNameBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserService userService = new UserService();
+                String newUsername = newusername.getText();
+                if (!newUsername.isEmpty()) {
+                    userService.changeUserName(userName , newUsername);
+                    JOptionPane.showMessageDialog(null, "Kullanıcı adı başarıyla değiştirildi.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Geçerli bir kullanıcı adı girin.");
                 }
             }
         });

@@ -20,6 +20,8 @@ public class UserService {
         userCollection = database.getCollection("Users");
     }
 
+
+
     public void registerUser(User user) {
         Document existingUser = userCollection.find(new Document("username", user.getUsername())).first();
         if (existingUser != null) {
@@ -68,6 +70,30 @@ public class UserService {
         userCollection.updateOne(query, update);
         System.out.println("Şifre başarıyla güncellendi!");
     }
+
+    public void changeUserName(String userName, String newUserName) {
+        // Kullanıcı adını güncelle
+        Document query = new Document("username", userName);
+        Document update = new Document("$set", new Document("username", newUserName));
+        userCollection.updateOne(query, update);
+        System.out.println("Kullanıcı adı başarıyla güncellendi!");
+
+        // Diğer kullanıcıların arkadaş listelerini güncelle
+        for (Document user : userCollection.find()) {
+            List<String> friends = (List<String>) user.get("friends");
+            if (friends != null && friends.contains(userName)) {
+                // Eski kullanıcı adını arkadaş listesinden çıkarıp yenisini ekle
+                friends.remove(userName);
+                friends.add(newUserName);
+
+                // Kullanıcı belgesini güncelle
+                Document friendUpdate = new Document("$set", new Document("friends", friends));
+                userCollection.updateOne(new Document("username", user.getString("username")), friendUpdate);
+            }
+        }
+        System.out.println("Arkadaş listelerindeki kullanıcı adı başarıyla güncellendi!");
+    }
+
     public boolean deleteUser(String username) {
         Document query = new Document("username", username);
         Document user = userCollection.find(query).first();
@@ -95,4 +121,16 @@ public class UserService {
 
         return new ArrayList<>(); // Kullanıcının arkadaş listesi yoksa boş liste döner
     }
+
+
+    public List<String> getAllUsers() {
+        List<String> allUsers = new ArrayList<>();
+        for (Document user : userCollection.find()) {
+            allUsers.add(user.getString("username"));
+        }
+        return allUsers;
+    }
+
+
+
 }

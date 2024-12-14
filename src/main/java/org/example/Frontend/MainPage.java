@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.example.Backend.ChatService;
+import org.example.Backend.User;
 import org.example.Backend.UserService;
 
 import javax.swing.*;
@@ -18,6 +19,8 @@ public class MainPage extends JFrame{
     private JButton addFriendButton;
     private JPanel MainPagePanel;
     private JTextField friendTextField;
+    private JButton buttonRemoveFriend;
+    private JButton adminPanelButton;
     private List<String> friends;
 
     public MainPage (String userName){
@@ -79,8 +82,11 @@ public class MainPage extends JFrame{
                 dispose();
                 Settings settings = new Settings(userName);
                 settings.setVisible(true);
+
             }
         });
+
+
 
 
         addFriendButton.addActionListener(new ActionListener() {
@@ -133,6 +139,25 @@ public class MainPage extends JFrame{
                     chat.setVisible(true);
 
                 }
+            }
+        });
+        if (!userName.equals("admin")) {
+            adminPanelButton.setVisible(false);
+
+        }
+
+        adminPanelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AdminPanel adminPanel = new AdminPanel();
+                adminPanel.setVisible(true);
+            }
+        });
+        buttonRemoveFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                User user = new User("arkadas", "arkadas", "arkadas", "arkadas");
+                user.removeFriend(friendTextField.getText());
             }
         });
     }
