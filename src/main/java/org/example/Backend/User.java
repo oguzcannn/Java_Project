@@ -89,6 +89,17 @@ public class User {
             return;
         }
 
+        // Karşı tarafın arkadaş listesinden de çıkar
+        Document friendDoc = userCollection.find(Filters.eq("username", friendUsername)).first();
+        if (friendDoc != null) {
+            List<String> friendList = (List<String>) friendDoc.get("friends");
+            if (friendList != null && friendList.contains(this.username)) {
+                friendList.remove(this.username);
+                userCollection.updateOne(Filters.eq("username", friendUsername), Updates.set("friends", friendList));
+                System.out.println(this.username + " karşı tarafın arkadaş listesinden silindi.");
+            }
+        }
+
         // ChatId'yi bul ve sil
         List<String> participants = new ArrayList<>();
         participants.add(this.username);
