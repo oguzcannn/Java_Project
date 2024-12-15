@@ -50,6 +50,12 @@ public class Chat extends JFrame {
         });
         // Timer başlatılıyor
         timer.start();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                timer.stop(); // Timer'ı durdur
+            }
+        });
 
         sendButton.addActionListener(new ActionListener() {
             @Override

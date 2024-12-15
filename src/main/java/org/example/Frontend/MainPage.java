@@ -6,7 +6,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.example.Backend.ChatService;
 import org.example.Backend.User;
 import org.example.Backend.UserService;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -76,6 +77,12 @@ public class MainPage extends JFrame{
         // Timer başlatılıyor
         timer.start();
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                timer.stop(); // Timer'ı durdur
+            }
+        });
         settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -156,7 +163,7 @@ public class MainPage extends JFrame{
         buttonRemoveFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                User user = new User("arkadas", "arkadas", "arkadas", "arkadas");
+                User user = new User(userName, "", "", "");
                 user.removeFriend(friendTextField.getText());
             }
         });

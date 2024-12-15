@@ -14,7 +14,8 @@ public class Admin extends User {
     }
 
     // Kullanıcı silme fonksiyonu
-    public void deleteUser(String usernameToDelete) {
+    @Override
+    public void removeFriend(String usernameToDelete) {
         MongoDatabase database = DatabaseConnection.getDatabase();
         MongoCollection<Document> userCollection = database.getCollection("Users");
         MongoCollection<Document> chatCollection = database.getCollection("Chats");

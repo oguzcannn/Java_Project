@@ -5,7 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import org.example.Backend.Admin;
 import org.example.Backend.UserService;
 
@@ -40,6 +41,38 @@ public class AdminPanel  extends  JFrame{
 
         // userList'e DefaultListModel set ediliyor
         userList.setModel(listModel);
+
+        Timer timer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Yeni kullanıcı listesini alıyoruz
+                List<String> updatedUsers = userService.getAllUsers();
+
+                // Yeni kullanıcıları ekliyoruz
+                for (String user : updatedUsers) {
+                    if (!listModel.contains(user)) {
+                        listModel.addElement(user);
+                    }
+                }
+
+                // Silinen kullanıcıları listeden çıkarıyoruz
+                for (int i = 0; i < listModel.size(); i++) {
+                    String user = listModel.get(i);
+                    if (!updatedUsers.contains(user)) {
+                        listModel.removeElement(user);
+                    }
+                }
+            }
+        });
+
+        // Timer başlatılıyor
+        timer.start();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                timer.stop(); // Timer'ı durdur
+            }
+        });
 
         // Kullanıcı seçildiğinde yapılacak işlemleri tanımlayabilirsiniz
         userList.addListSelectionListener(e -> {
@@ -81,7 +114,7 @@ public class AdminPanel  extends  JFrame{
             public void actionPerformed(ActionEvent e) {
                 String selectedUser = userList.getSelectedValue();
                 Admin admin = new Admin("admin", "admin", "admin123", "admin");
-                admin.deleteUser(selectedUser);
+                admin.removeFriend(selectedUser);
 
             }
         });
