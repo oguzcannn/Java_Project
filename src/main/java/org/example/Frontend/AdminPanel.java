@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.ArrayList;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import org.example.Backend.Admin;
@@ -86,14 +85,7 @@ public class AdminPanel  extends  JFrame{
         userNameChangeBtn.addActionListener(e -> {
             String newUserName = userNameTextField.getText();
             String selectedUser = userList.getSelectedValue();
-            if (selectedUser != null && !newUserName.isEmpty()) {
-                userService.changeUserName(selectedUser, newUserName);
-                // Kullanıcı adı değiştiğinde listeyi güncelle
-                listModel.set(userList.getSelectedIndex(), newUserName);
-                JOptionPane.showMessageDialog(null, "Kullanıcı adı başarıyla değiştirildi.");
-            } else {
-                JOptionPane.showMessageDialog(null, "Geçerli bir kullanıcı adı girin.");
-            }
+            userService.changeUserName(selectedUser, newUserName);
         });
 
         // Kullanıcı şifresi değiştirme işlemi

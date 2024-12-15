@@ -73,6 +73,12 @@ public class UserService {
 
     public void changeUserName(String userName, String newUserName) {
         // Kullanıcı adını güncelle
+        Document existingUser = userCollection.find(new Document("username", newUserName)).first();
+        if (existingUser != null) {
+            JOptionPane.showMessageDialog(null,"Bu kullanıcı adı zaten alınmış!","Hata",JOptionPane.PLAIN_MESSAGE);
+            System.out.println("Hata: Bu kullanıcı adı zaten mevcut!");
+            return; // İşlemi sonlandır
+        }
         Document query = new Document("username", userName);
         Document update = new Document("$set", new Document("username", newUserName));
         userCollection.updateOne(query, update);
@@ -91,6 +97,7 @@ public class UserService {
                 userCollection.updateOne(new Document("username", user.getString("username")), friendUpdate);
             }
         }
+        JOptionPane.showMessageDialog(null,"Bu kullanıcının adı değiştirildi.","Hata",JOptionPane.PLAIN_MESSAGE);
         System.out.println("Arkadaş listelerindeki kullanıcı adı başarıyla güncellendi!");
     }
 
