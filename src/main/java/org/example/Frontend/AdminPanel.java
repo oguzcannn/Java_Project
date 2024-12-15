@@ -85,6 +85,10 @@ public class AdminPanel  extends  JFrame{
         userNameChangeBtn.addActionListener(e -> {
             String newUserName = userNameTextField.getText();
             String selectedUser = userList.getSelectedValue();
+            if (newUserName == null || newUserName.isEmpty() || selectedUser == null || selectedUser.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Kullanıcı adı veya seçilen kullanıcı adı boş olamaz.", "Hata", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             userService.changeUserName(selectedUser, newUserName);
         });
 
