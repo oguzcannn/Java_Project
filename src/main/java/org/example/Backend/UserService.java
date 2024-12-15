@@ -3,6 +3,7 @@ package org.example.Backend;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import javax.swing.*;
@@ -116,15 +117,37 @@ public class UserService {
     }
 
     public boolean deleteUser(String username) {
+        // Kullanıcıyı bulma
         Document query = new Document("username", username);
         Document user = userCollection.find(query).first();
+
         if (user != null) {
+            // 1. Kullanıcının arkadaş listesinden silinmesi
+            for (Document otherUser : userCollection.find()) {
+                List<String> friends = (List<String>) otherUser.get("friends");
+                if (friends != null && friends.contains(username)) {
+                    // Eski kullanıcı adı arkadaş listesinden çıkarılıyor
+                    friends.remove(username);
+
+                    // Güncellenmiş arkadaş listesini kaydet
+                    Document friendUpdate = new Document("$set", new Document("friends", friends));
+                    userCollection.updateOne(new Document("username", otherUser.getString("username")), friendUpdate);
+                }
+            }
+
+            // 2. Kullanıcıyı chat'lerden tamamen sil
+            chatCollection.deleteMany(Filters.all("participants", username));
+
+            // 3. Kullanıcının silinmesi
             userCollection.deleteOne(query);
             System.out.println("Kullanıcı başarıyla silindi!");
-            return true;
+
+            return true;  // Başarıyla silindi
         }
+
         return false;  // Kullanıcı bulunamadıysa false döner
     }
+
     public void addFriend(String currentUser, String friendUsername) {
         Document query = new Document("username", currentUser);
         Document update = new Document("$addToSet", new Document("friends", friendUsername));

@@ -73,7 +73,7 @@ public class AdminPanel  extends  JFrame{
             }
         });
 
-        // Kullanıcı seçildiğinde yapılacak işlemleri tanımlayabilirsiniz
+
         userList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 String selectedUser = userList.getSelectedValue();
