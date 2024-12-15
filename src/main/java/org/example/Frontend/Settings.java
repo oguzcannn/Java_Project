@@ -48,7 +48,11 @@ public class Settings extends JFrame{
                 }
                 userService.changePassword(userName, newPass);
                 JOptionPane.showMessageDialog(null, "Şifreniz başarıyla değiştirildi!", "Başarılı", JOptionPane.INFORMATION_MESSAGE);
-
+                dispose();
+                SwingUtilities.invokeLater(()->{
+                    Login login = new Login();
+                    login.setVisible(true);
+                });
             }
         });
         deleteAccountButton.addActionListener(new ActionListener() {
@@ -69,8 +73,10 @@ public class Settings extends JFrame{
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Hesabınız başarıyla silindi.", "Başarılı", JOptionPane.INFORMATION_MESSAGE);
                         dispose();  // JFrame'i kapatalım
-                        Login login = new Login();
-                        login.setVisible(true);
+                        SwingUtilities.invokeLater(()->{
+                            Login login = new Login();
+                            login.setVisible(true);
+                        });
                     } else {
                         JOptionPane.showMessageDialog(null, "Hesap silinirken bir hata oluştu.", "Hata", JOptionPane.ERROR_MESSAGE);
                     }
@@ -86,7 +92,11 @@ public class Settings extends JFrame{
                 String newUsername = newusername.getText();
                 if (!newUsername.isEmpty()) {
                     userService.changeUserName(userName , newUsername);
-                    JOptionPane.showMessageDialog(null, "Kullanıcı adı başarıyla değiştirildi.");
+                    dispose();
+                    SwingUtilities.invokeLater(()->{
+                        Login login = new Login();
+                        login.setVisible(true);
+                    });
                 } else {
                     JOptionPane.showMessageDialog(null, "Geçerli bir kullanıcı adı girin.");
                 }
