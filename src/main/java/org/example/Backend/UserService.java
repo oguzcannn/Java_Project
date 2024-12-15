@@ -12,12 +12,13 @@ import java.util.Objects;
 
 public class UserService {
     private final MongoCollection<Document> userCollection;
-
+    private final MongoCollection<Document> chatCollection;
     public UserService() {
         String connectionString = "mongodb+srv://javamessage:javamessage@cluster0.f8i4e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
         var mongoClient = MongoClients.create(connectionString);
         MongoDatabase database = mongoClient.getDatabase("UserSystem");
         userCollection = database.getCollection("Users");
+        chatCollection = database.getCollection("Chats");
     }
 
 
@@ -95,6 +96,19 @@ public class UserService {
                 // Kullanıcı belgesini güncelle
                 Document friendUpdate = new Document("$set", new Document("friends", friends));
                 userCollection.updateOne(new Document("username", user.getString("username")), friendUpdate);
+            }
+        }
+        // Chats koleksiyonunda da participants listesini güncelle
+        for (Document chat : chatCollection.find()) {
+            List<String> participants = (List<String>) chat.get("participants");
+            if (participants != null && participants.contains(userName)) {
+                // Eski kullanıcı adını participants listesinden çıkarıp yenisini ekle
+                participants.remove(userName);
+                participants.add(newUserName);
+
+                // Chat belgesini güncelle
+                Document chatUpdate = new Document("$set", new Document("participants", participants));
+                chatCollection.updateOne(new Document("_id", chat.get("_id")), chatUpdate);
             }
         }
         JOptionPane.showMessageDialog(null,"Bu kullanıcının adı değiştirildi.","Hata",JOptionPane.PLAIN_MESSAGE);
