@@ -19,11 +19,17 @@ public class ChatService {
     private final ExecutorService executor;
 
     public ChatService() {
-        String connectionString = "mongodb+srv://javamessage:javamessage@cluster0.f8i4e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-        MongoClient mongoClient = MongoClients.create(connectionString);
-        MongoDatabase database = mongoClient.getDatabase("UserSystem");
-        chatCollection = database.getCollection("Chats");
-        executor = Executors.newSingleThreadExecutor();
+        try {
+            String connectionString = "mongodb+srv://javamessage:javamessage@cluster0.f8i4e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+            MongoClient mongoClient = MongoClients.create(connectionString);
+            MongoDatabase database = mongoClient.getDatabase("UserSystem");
+            chatCollection = database.getCollection("Chats");
+            executor = Executors.newSingleThreadExecutor();
+        } catch (Exception e) {
+            System.err.println("Error: Database connection or collection could not be created!" + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("ChatService could not be started, please check the settings.", e);
+        }
     }
 
     public String createChat(List<String> participants) {
@@ -45,7 +51,7 @@ public class ChatService {
 
         // Yeni sohbet veritabanına ekleniyor
         chatCollection.insertOne(chatDoc);
-        System.out.println("Yeni bir sohbet oluşturuldu: " + chatId);
+        System.out.println("A new chat has been created: " + chatId);
 
         return chatId;  // Yeni chatId döndürülür
     }
@@ -58,7 +64,7 @@ public class ChatService {
                 .append("timestamp", message.getMessage_id());
 
         chatCollection.updateOne(Filters.eq("chatId", chatId), Updates.push("messages", messageDoc));
-        System.out.println("Mesaj eklendi: " + message.getMessage_id());
+        System.out.println("Message added: " + message.getMessage_id());
     }
 
 
@@ -93,7 +99,7 @@ public class ChatService {
         if (chatDoc != null) {
             return chatDoc.getString("chatId");  // Eğer sohbet varsa, chatId döndürülür
         } else {
-            System.out.println("Bu kullanıcılar arasında bir sohbet bulunamadı.");
+            System.out.println("No chat found between these users.");
             return null;  // Eğer sohbet yoksa, null döndürülür
         }
     }

@@ -1,5 +1,6 @@
 package org.example.Frontend;
 
+import org.example.Backend.Chat;
 import org.example.Backend.UserService;
 
 import javax.swing.*;
@@ -22,6 +23,12 @@ public class Settings extends JFrame{
         setSize(400,400);
         setTitle("Settings");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
         usernameLabel.setText(userName);
         changePasswordButton.addActionListener(new ActionListener() {
             @Override
@@ -32,22 +39,22 @@ public class Settings extends JFrame{
 
                 // Kontrolleri yapalım
                 if (currentPass.isEmpty() || newPass.isEmpty() || newPassAgain.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Lütfen tüm alanları doldurun.", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please fill in all the fields.", "error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 if (!newPass.equals(newPassAgain)) {
-                    JOptionPane.showMessageDialog(null, "Yeni şifreler uyuşmuyor.", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The new passwords do not match.", "error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 UserService userService = new UserService();
                 boolean isOldPasswordCorrect = userService.loginUser(userName, currentPass);
                 if (!isOldPasswordCorrect) {
-                    JOptionPane.showMessageDialog(null, "Eski şifre yanlış.", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The old password is incorrect.", "error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 userService.changePassword(userName, newPass);
-                JOptionPane.showMessageDialog(null, "Şifreniz başarıyla değiştirildi!", "Başarılı", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Your password has been successfully changed!", "Successful", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
                 SwingUtilities.invokeLater(()->{
                     Login login = new Login();
@@ -62,23 +69,23 @@ public class Settings extends JFrame{
                 UserService userService = new UserService();
                 boolean isOldPasswordCorrect = userService.loginUser(userName, currentPass);
                 if (!isOldPasswordCorrect) {
-                    JOptionPane.showMessageDialog(null, "Eski şifre yanlış.", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The old password is incorrect.", "error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                int option = JOptionPane.showConfirmDialog(null, "Hesabınızı silmek istediğinizden emin misiniz?", "Hesap Silme", JOptionPane.YES_NO_OPTION);
+                int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "delete account", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.YES_OPTION) {
                     // Kullanıcıyı silelim
 
                     boolean success = userService.deleteUser(userName);
                     if (success) {
-                        JOptionPane.showMessageDialog(null, "Hesabınız başarıyla silindi.", "Başarılı", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Are you sure you want to delete your account?", "Successful", JOptionPane.INFORMATION_MESSAGE);
                         dispose();  // JFrame'i kapatalım
                         SwingUtilities.invokeLater(()->{
                             Login login = new Login();
                             login.setVisible(true);
                         });
                     } else {
-                        JOptionPane.showMessageDialog(null, "Hesap silinirken bir hata oluştu.", "Hata", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "An error occurred while deleting the account.", "error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -98,7 +105,7 @@ public class Settings extends JFrame{
                         login.setVisible(true);
                     });
                 } else {
-                    JOptionPane.showMessageDialog(null, "Geçerli bir kullanıcı adı girin.");
+                    JOptionPane.showMessageDialog(null, "Please enter a valid username.");
                 }
             }
         });

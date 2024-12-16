@@ -19,6 +19,12 @@ public class Login extends JFrame {
         setSize(400, 200);
         setTitle("Login");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -35,7 +41,7 @@ public class Login extends JFrame {
                     });
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "kullanıcı bulunamadı", "hata", JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "User not found.", "error", JOptionPane.PLAIN_MESSAGE);
                 }
             }
         });

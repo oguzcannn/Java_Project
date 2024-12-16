@@ -23,8 +23,14 @@ public class GUI extends JFrame{
     public GUI(){
         add(Panel1);
         setSize(400,200);
-        setTitle("Kullanıcı kaydı");
+        setTitle("SignUp");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
         kaydolButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

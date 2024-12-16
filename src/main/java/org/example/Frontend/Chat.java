@@ -25,6 +25,12 @@ public class Chat extends JFrame {
         setSize(500, 600);
         setTitle("Chat with: " + friend);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
 
         ChatService chatService = new ChatService();
 

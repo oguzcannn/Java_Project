@@ -12,14 +12,20 @@ import java.util.List;
 import java.util.Objects;
 
 public class UserService {
-    private final MongoCollection<Document> userCollection;
-    private final MongoCollection<Document> chatCollection;
+    private MongoCollection<Document> userCollection;
+    private MongoCollection<Document> chatCollection;
     public UserService() {
-        String connectionString = "mongodb+srv://javamessage:javamessage@cluster0.f8i4e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-        var mongoClient = MongoClients.create(connectionString);
-        MongoDatabase database = mongoClient.getDatabase("UserSystem");
-        userCollection = database.getCollection("Users");
-        chatCollection = database.getCollection("Chats");
+        try {
+            String connectionString = "mongodb+srv://javamessage:javamessage@cluster0.f8i4e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+            var mongoClient = MongoClients.create(connectionString);
+            MongoDatabase database = mongoClient.getDatabase("UserSystem");
+            userCollection = database.getCollection("Users");
+            chatCollection = database.getCollection("Chats");
+
+        } catch (Exception e) {
+            System.err.println("An error occurred while connecting to the database: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
@@ -27,23 +33,23 @@ public class UserService {
     public void registerUser(User user) {
         Document existingUser = userCollection.find(new Document("username", user.getUsername())).first();
         if (existingUser != null) {
-            JOptionPane.showMessageDialog(null,"Bu kullanıcı adı zaten alınmış!","Hata",JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null,"This username is already taken!","error",JOptionPane.PLAIN_MESSAGE);
             return; // Metodu sonlandır
         }
         if(Objects.equals(user.getUsername(), "")){
-            JOptionPane.showMessageDialog(null,"Kullanıcı adı boş olamaz!","Hata",JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Username cannot be empty!","error",JOptionPane.PLAIN_MESSAGE);
             return;
         }
         if(Objects.equals(user.getUserNumber(), "")){
-            JOptionPane.showMessageDialog(null,"Kullanıcı numarası boş olamaz!","Hata",JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null,"User number cannot be empty!","error",JOptionPane.PLAIN_MESSAGE);
             return;
         }
         if(Objects.equals(user.getPassword(), "")){
-            JOptionPane.showMessageDialog(null,"Şifre boş olamaz!","Hata",JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Password cannot be empty!","error",JOptionPane.PLAIN_MESSAGE);
             return;
         }
         if(Objects.equals(user.getEmail(), "")){
-            JOptionPane.showMessageDialog(null,"Mail adı boş olamaz!","Hata",JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Email cannot be empty!","error",JOptionPane.PLAIN_MESSAGE);
             return;
         }
 
@@ -54,7 +60,7 @@ public class UserService {
                 .append("email", user.getEmail())
                 .append("createdAt", java.time.Instant.now().toString());
         userCollection.insertOne(doc);
-        System.out.println("Kullanıcı başarıyla kaydedildi!");
+        System.out.println("User has been successfully registered!");
     }
     public boolean isUsernameExists(String username) {
         Document query = new Document("username", username);
@@ -70,21 +76,21 @@ public class UserService {
         Document query = new Document("username", userName);
         Document update = new Document("$set", new Document("password", newPassword));
         userCollection.updateOne(query, update);
-        System.out.println("Şifre başarıyla güncellendi!");
+        System.out.println("User has been successfully registered!");
     }
 
     public void changeUserName(String userName, String newUserName) {
         // Kullanıcı adını güncelle
         Document existingUser = userCollection.find(new Document("username", newUserName)).first();
         if (existingUser != null) {
-            JOptionPane.showMessageDialog(null,"Bu kullanıcı adı zaten alınmış!","Hata",JOptionPane.PLAIN_MESSAGE);
-            System.out.println("Hata: Bu kullanıcı adı zaten mevcut!");
+            JOptionPane.showMessageDialog(null,"User has been successfully registered!","error",JOptionPane.PLAIN_MESSAGE);
+            System.out.println("Error: This username already exists!");
             return; // İşlemi sonlandır
         }
         Document query = new Document("username", userName);
         Document update = new Document("$set", new Document("username", newUserName));
         userCollection.updateOne(query, update);
-        System.out.println("Kullanıcı adı başarıyla güncellendi!");
+        System.out.println("Username has been successfully updated!");
 
         // Diğer kullanıcıların arkadaş listelerini güncelle
         for (Document user : userCollection.find()) {
@@ -112,8 +118,8 @@ public class UserService {
                 chatCollection.updateOne(new Document("_id", chat.get("_id")), chatUpdate);
             }
         }
-        JOptionPane.showMessageDialog(null,"Bu kullanıcının adı değiştirildi.","Hata",JOptionPane.PLAIN_MESSAGE);
-        System.out.println("Arkadaş listelerindeki kullanıcı adı başarıyla güncellendi!");
+        JOptionPane.showMessageDialog(null,"The name of this user has been changed.","error",JOptionPane.PLAIN_MESSAGE);
+        System.out.println("The username in the friend lists has been successfully updated!");
     }
 
     public boolean deleteUser(String username) {
@@ -140,7 +146,7 @@ public class UserService {
 
             // 3. Kullanıcının silinmesi
             userCollection.deleteOne(query);
-            System.out.println("Kullanıcı başarıyla silindi!");
+            System.out.println("User has been successfully deleted!");
 
             return true;  // Başarıyla silindi
         }
@@ -152,7 +158,7 @@ public class UserService {
         Document query = new Document("username", currentUser);
         Document update = new Document("$addToSet", new Document("friends", friendUsername));
         userCollection.updateOne(query, update);
-        System.out.println(friendUsername + " başarıyla arkadaş olarak eklendi!");
+        System.out.println(friendUsername + " successfully added as a friend!");
     }
 
     public List<String> getFriendList(String currentUser) {

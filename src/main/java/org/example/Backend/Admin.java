@@ -23,11 +23,11 @@ public class Admin extends User implements UserInterface {
         // Kullanıcıyı sil
         Document userDoc = userCollection.find(Filters.eq("username", usernameToDelete)).first();
         if (userDoc == null) {
-            System.out.println("Silinecek kullanıcı bulunamadı: " + usernameToDelete);
+            System.out.println("User to be deleted not found: " + usernameToDelete);
             return;
         }
         userCollection.deleteOne(Filters.eq("username", usernameToDelete));
-        System.out.println("Kullanıcı silindi: " + usernameToDelete);
+        System.out.println("User deleted: " + usernameToDelete);
 
         // Diğer kullanıcıların arkadaş listesinden çıkar
         for (Document otherUserDoc : userCollection.find()) {
@@ -35,12 +35,12 @@ public class Admin extends User implements UserInterface {
             if (friends != null && friends.contains(usernameToDelete)) {
                 friends.remove(usernameToDelete);
                 userCollection.updateOne(Filters.eq("username", otherUserDoc.getString("username")), Updates.set("friends", friends));
-                System.out.println(usernameToDelete + " diğer kullanıcıların arkadaş listesinden çıkarıldı.");
+                System.out.println(usernameToDelete + " removed from other users' friend lists.");
             }
         }
 
         // Kullanıcı ile ilişkili tüm sohbetleri sil
         chatCollection.deleteMany(Filters.all("participants", usernameToDelete));
-        System.out.println(usernameToDelete + " ile ilişkili tüm sohbetler silindi.");
+        System.out.println(usernameToDelete + " all chats associated with have been deleted.");
     }
 }

@@ -1,6 +1,5 @@
 package org.example.Backend;
 
-import java.util.List;
 
 public interface UserInterface {
 

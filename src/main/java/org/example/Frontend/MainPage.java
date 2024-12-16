@@ -29,6 +29,12 @@ public class MainPage extends JFrame{
         setSize(400,500);
         setTitle("N'aber");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
         // UserService örneği oluşturuluyor
         UserService userService = new UserService();
 
@@ -103,7 +109,7 @@ public class MainPage extends JFrame{
                 friend = friendTextField.getText();
                 UserService userService = new UserService();
                 if(!userService.isUsernameExists(friend)){
-                    JOptionPane.showMessageDialog(null,"Yanlış kullanıcı adı","Hata",JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"Incorrect username.","error",JOptionPane.PLAIN_MESSAGE);
                     return;
                 }
                 if (!listModel.contains(friend)){
@@ -119,7 +125,7 @@ public class MainPage extends JFrame{
                 ChatService chatService = new ChatService();
                 String chatId = chatService.createChat(participants);
                 if (chatId != null) {
-                    System.out.println("Sohbet başarıyla oluşturuldu");
+                    System.out.println("The chat has been successfully created.");
                 }
 
                 userService.addFriend(userName,friend);

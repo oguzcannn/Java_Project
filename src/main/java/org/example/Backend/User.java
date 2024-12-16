@@ -74,7 +74,7 @@ public class User implements UserInterface {
         // Kullanıcı belgesini getir
         Document userDoc = userCollection.find(Filters.eq("username", this.username)).first();
         if (userDoc == null) {
-            System.out.println("Kullanıcı bulunamadı: " + this.username);
+            System.out.println("User not found: " + this.username);
             return;
         }
 
@@ -83,9 +83,9 @@ public class User implements UserInterface {
         if (friends != null && friends.contains(friendUsername)) {
             friends.remove(friendUsername);
             userCollection.updateOne(Filters.eq("username", this.username), Updates.set("friends", friends));
-            System.out.println(friendUsername + " arkadaş listesinden silindi.");
+            System.out.println(friendUsername + " removed from the friend list.");
         } else {
-            System.out.println(friendUsername + " arkadaş listenizde bulunamadı.");
+            System.out.println(friendUsername + " not found in your friend list.");
             return;
         }
 
@@ -96,7 +96,7 @@ public class User implements UserInterface {
             if (friendList != null && friendList.contains(this.username)) {
                 friendList.remove(this.username);
                 userCollection.updateOne(Filters.eq("username", friendUsername), Updates.set("friends", friendList));
-                System.out.println(this.username + " karşı tarafın arkadaş listesinden silindi.");
+                System.out.println(this.username + " removed from the other user's friend list.");
             }
         }
 
@@ -109,9 +109,8 @@ public class User implements UserInterface {
         Document chatDoc = chatCollection.find(Filters.all("participants", participants)).first();
         if (chatDoc != null) {
             chatCollection.deleteOne(Filters.eq("chatId", chatDoc.getString("chatId")));
-            System.out.println("Chat silindi: " + chatDoc.getString("chatId"));
+            System.out.println("Chat deleted: " + chatDoc.getString("chatId"));
         }
     }
-
 }
 

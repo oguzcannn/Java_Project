@@ -23,7 +23,12 @@ public class AdminPanel  extends  JFrame{
         add(adminPanel);
         setSize(500, 500);
         setTitle("Admin Panel");
-
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
+        }
         // UserService örneği oluşturuluyor
         UserService userService = new UserService();
 
@@ -77,7 +82,7 @@ public class AdminPanel  extends  JFrame{
         userList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 String selectedUser = userList.getSelectedValue();
-                SelectedUser.setText("Seçilen Kullanıcı: " + selectedUser);
+                SelectedUser.setText("Selected User: " + selectedUser);
             }
         });
 
@@ -86,7 +91,7 @@ public class AdminPanel  extends  JFrame{
             String newUserName = userNameTextField.getText();
             String selectedUser = userList.getSelectedValue();
             if (newUserName == null || newUserName.isEmpty() || selectedUser == null || selectedUser.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Kullanıcı adı veya seçilen kullanıcı adı boş olamaz.", "Hata", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Username or selected username cannot be empty.", "error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             userService.changeUserName(selectedUser, newUserName);
@@ -98,9 +103,9 @@ public class AdminPanel  extends  JFrame{
             String selectedUser = userList.getSelectedValue();
             if (selectedUser != null && !newPassword.isEmpty()) {
                 userService.changePassword(selectedUser, newPassword);
-                JOptionPane.showMessageDialog(null, "Şifre başarıyla değiştirildi.");
+                JOptionPane.showMessageDialog(null, "The password has been successfully changed.");
             } else {
-                JOptionPane.showMessageDialog(null, "Geçerli bir şifre girin.");
+                JOptionPane.showMessageDialog(null, "Please enter a valid password.");
             }
         });
 
@@ -109,7 +114,7 @@ public class AdminPanel  extends  JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedUser = userList.getSelectedValue();
-                Admin admin = new Admin("admin", "admin", "admin123", "admin");
+                Admin admin = new Admin("admin", "", "123", "");
                 admin.removeFriend(selectedUser);
 
             }
