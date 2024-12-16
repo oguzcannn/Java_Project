@@ -31,8 +31,20 @@ Projenin temel işleyişi aşağıda adım adım açıklanmıştır:
 ![chat](https://github.com/user-attachments/assets/a225a4dd-f4ff-46cc-a9f2-f6a0f037e037)
 
 *Bu ekran, arkadaşlarınızla sohbet etmek için kullanılan arayüzdür.*
+### 3.Ayarlar ve Admin Panel
+- Kullanıcılar, ayarlar ekranı ile kullanıcı bilgilerini değiştirip, hesaplarını silebilir.
 
-### 3. Veritabanı Kullanımı
+![Ekran görüntüsü 2024-12-16 214214](https://github.com/user-attachments/assets/9a74b0da-2579-4b79-b59b-2c9e30a276e2)
+
+*Bu ekran, kişinin kullanıcı bilgilerini değiştirmeye yarayan ekrandır.*
+
+- Admin, admin panel sayesinde tüm kullanıcıların isimlerini ve şifrelerini değiştirebilir. Ayrıca hesapları silebilir.
+
+![Ekran görüntüsü 2024-12-16 214207](https://github.com/user-attachments/assets/29626617-4fb2-4679-bc69-a748dd74211a)
+
+*Bu ekran, adminin tüm kullanıcıların bilgilerini değiştirmesine imkan sağlayan ekrandır.*
+
+### 4.Veritabanı Kullanımı
 - Kullanıcı bilgileri, arkadaş listeleri ve mesajlaşmalar MongoDB veri tabanında JSON dokümanları olarak depolanır.
 - Bu sayede veriler esnek ve ölçeklenebilir bir yapıda saklanır.
 
@@ -42,7 +54,7 @@ Projenin temel işleyişi aşağıda adım adım açıklanmıştır:
 
 *Veritabanı yapısını temsil eden bir ekran görüntüleri.*
 
-### 4. Gerçek Zamanlı Mesaj Takibi
+### 5. Gerçek Zamanlı Mesaj Takibi
 - MongoDB Change Stream kullanılarak, gelen yeni mesajlar ve yapılan değişiklikler gerçek zamanlı olarak izlenebilir.
 - Kullanıcılar, mesajlar geldiğinde uygulamayı yenilemeden anında görüntüleyebilirler.
 
