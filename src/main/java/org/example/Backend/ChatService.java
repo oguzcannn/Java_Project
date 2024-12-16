@@ -6,11 +6,7 @@ import java.util.ArrayList;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import org.bson.Document;
-import java.util.function.Consumer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,27 +29,26 @@ public class ChatService {
     }
 
     public String createChat(List<String> participants) {
-        // Katılımcıları sırasız hale getirmek için sıralıyoruz
-        Collections.sort(participants);  // Katılımcıları sıralıyoruz
+        // userları sırasız hale getirmek için sıralama yapıyoruz
+        Collections.sort(participants);
 
-        // Bu iki kullanıcı arasındaki sohbeti arıyoruz
         String chatId = findChatIdByParticipants(participants.get(0), participants.get(1));
 
         if (chatId != null) {
-            return chatId;  // Eğer sohbet zaten varsa mevcut chatId'yi döndürür
+            return chatId;  // eğer sohbet zaten varsa mevcut chatId'yi döndürür
         }
 
-        // Yeni bir sohbet oluşturuluyor
+        // eğer sohbet yoksa yeni sohbet oluşturur
         chatId = "CHAT-" + System.currentTimeMillis();
         Document chatDoc = new Document("chatId", chatId)
-                .append("participants", participants)  // Katılımcıları _id'ler ile kaydediyoruz
+                .append("participants", participants)
                 .append("messages", new ArrayList<>());
 
-        // Yeni sohbet veritabanına ekleniyor
+        // yeni sohbet veritabanına ekleniyor
         chatCollection.insertOne(chatDoc);
         System.out.println("A new chat has been created: " + chatId);
 
-        return chatId;  // Yeni chatId döndürülür
+        return chatId;
     }
 
     public void addMessage(String chatId, Message message) {
@@ -67,7 +62,7 @@ public class ChatService {
         System.out.println("Message added: " + message.getMessage_id());
     }
 
-
+        // mesajları getiren fonksiyon
     public List<Message> getMessages(String chatId) {
         Document chatDoc = chatCollection.find(Filters.eq("chatId", chatId)).first();
         if (chatDoc != null) {
@@ -87,20 +82,18 @@ public class ChatService {
     }
 
     public String findChatIdByParticipants(String userId1, String userId2) {
-        // Katılımcıları sırasız hale getirmek için sıralıyoruz
         List<String> participants = new ArrayList<>();
         participants.add(userId1);
         participants.add(userId2);
-        Collections.sort(participants);  // Katılımcıları sıralıyoruz, bu sayede sıralama önemli olmuyor
+        Collections.sort(participants);
 
-        // Şimdi sıralı haliyle sohbeti arıyoruz
         Document chatDoc = chatCollection.find(Filters.all("participants", participants)).first();
 
         if (chatDoc != null) {
-            return chatDoc.getString("chatId");  // Eğer sohbet varsa, chatId döndürülür
+            return chatDoc.getString("chatId");  // eğer sohbet varsa chatin idsi döndürülür
         } else {
             System.out.println("No chat found between these users.");
-            return null;  // Eğer sohbet yoksa, null döndürülür
+            return null;  // eğer sohbet yoksa null döndürülür
         }
     }
 

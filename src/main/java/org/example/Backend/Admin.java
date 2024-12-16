@@ -13,14 +13,14 @@ public class Admin extends User implements UserInterface {
         super(username, userNumber, password, email);
     }
 
-    // Kullanıcı silme fonksiyonu
+    // user silme fonksiyonu
     @Override
     public void removeFriend(String usernameToDelete) {
         MongoDatabase database = DatabaseConnection.getDatabase();
         MongoCollection<Document> userCollection = database.getCollection("Users");
         MongoCollection<Document> chatCollection = database.getCollection("Chats");
 
-        // Kullanıcıyı sil
+        // userı sil
         Document userDoc = userCollection.find(Filters.eq("username", usernameToDelete)).first();
         if (userDoc == null) {
             System.out.println("User to be deleted not found: " + usernameToDelete);
@@ -29,7 +29,7 @@ public class Admin extends User implements UserInterface {
         userCollection.deleteOne(Filters.eq("username", usernameToDelete));
         System.out.println("User deleted: " + usernameToDelete);
 
-        // Diğer kullanıcıların arkadaş listesinden çıkar
+        // arkadaşlarının da arkadaş listesinden çıkar
         for (Document otherUserDoc : userCollection.find()) {
             List<String> friends = (List<String>) otherUserDoc.get("friends");
             if (friends != null && friends.contains(usernameToDelete)) {
@@ -39,7 +39,7 @@ public class Admin extends User implements UserInterface {
             }
         }
 
-        // Kullanıcı ile ilişkili tüm sohbetleri sil
+        // kullanıcı ile alakalı sohbetleri sil
         chatCollection.deleteMany(Filters.all("participants", usernameToDelete));
         System.out.println(usernameToDelete + " all chats associated with have been deleted.");
     }

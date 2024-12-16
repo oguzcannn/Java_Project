@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Chat implements ChatInterface{
     private String chatId;
-    private List<String> participants; // İki kullanıcı ID'si
+    private List<String> participants; // kullanıcıların idleri
     private List<Message> messages;
 
     public Chat(String chatId, List<String> participants) {

@@ -18,7 +18,7 @@ public class Chat extends JFrame {
     private JList<String> messagesList;
     private JScrollPane messagesScrollPane;
     private final DefaultListModel<String> listModel;
-    private int previousMessageCount = 0;  // Önceki mesaj sayısını tutacak
+    private int previousMessageCount = 0;
 
     public Chat(String friend, String currentUser, String chatId) {
         add(messagesPanel);
@@ -42,24 +42,24 @@ public class Chat extends JFrame {
                 int currentMessageCount = chatService.getMessages(chatId).size();  // Mevcut mesaj sayısı
 
                 if (currentMessageCount > previousMessageCount) {
-                    // Yeni mesaj eklenmişse
+                    // yeni mesaj elenirse listeye ekle
                     List<Message> newMessages = chatService.getMessages(chatId);
                     for (int i = previousMessageCount; i < currentMessageCount; i++) {
                         Message msg = newMessages.get(i);
                         String formattedMessage = (msg.getSender_id().equals(currentUser) ? "You: " : "Friend: ") + msg.getMessage_content();
-                        listModel.addElement(formattedMessage);  // Yalnızca yeni mesajları ekle
+                        listModel.addElement(formattedMessage);
                         scrollToBottom();
                     }
-                    previousMessageCount = currentMessageCount;  // Önceki mesaj sayısını güncelle
+                    previousMessageCount = currentMessageCount;
                 }
             }
         });
-        // Timer başlatılıyor
+
         timer.start();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                timer.stop(); // Timer'ı durdur
+                timer.stop();
             }
         });
 
@@ -78,7 +78,7 @@ public class Chat extends JFrame {
         messagesInput.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) { // Sadece Enter tuşunu kontrol ediyoruz
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) { // entera  basınca çalışır
                     String messageContent = messagesInput.getText();
                     if (!messageContent.isEmpty()) {
                         Message message = new Message(currentUser, friend, messageContent);
@@ -92,7 +92,7 @@ public class Chat extends JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                timer.stop(); // Timer'ı durdur
+                timer.stop();
                  }
         });
     }

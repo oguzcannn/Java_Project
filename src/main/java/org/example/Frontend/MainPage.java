@@ -35,58 +35,56 @@ public class MainPage extends JFrame{
                  InstantiationException e) {
             throw new RuntimeException(e);
         }
-        // UserService örneği oluşturuluyor
+
         UserService userService = new UserService();
 
-        // Arkadaş listesini sınıfın üyesine yükleyin.
         friends = new CopyOnWriteArrayList<>(userService.getFriendList(userName));
 
-        // List modelini oluşturuyoruz
+
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        // Arkadaşları liste modeline ekliyoruz
+
         for (String friend : friends) {
             listModel.addElement(friend);
         }
 
-        // FriendList'e DefaultListModel set ediliyor
+
         FriendList.setModel(listModel);
 
-        // Timer içinde listeyi güncelleyin
+        // timer ile arkadaş listesni güncelliyoruz.
         Timer timer = new Timer(5000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Yeni arkadaş listesini alıyoruz
+                // arkadaş listesini çekiyoz
                 List<String> updatedFriends = userService.getFriendList(userName);
 
-                // Yeni arkadaşları ekliyoruz
+                // yenileri ekliyozz
                 for (String friend : updatedFriends) {
                     if (!listModel.contains(friend)) {
                         listModel.addElement(friend);
                     }
                 }
 
-                // Silinen arkadaşları listeden çıkarıyoruz
+                // silinenleri çıkar
                 for (String friend : friends) {
                     if (!updatedFriends.contains(friend)) {
                         listModel.removeElement(friend);
                     }
                 }
 
-                // Arkadaş listesini güncelliyoruz
+                // en son güncelle
                 friends.clear();
                 friends.addAll(updatedFriends);
             }
         });
 
 
-        // Timer başlatılıyor
         timer.start();
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                timer.stop(); // Timer'ı durdur
+                timer.stop();
             }
         });
         settingsButton.addActionListener(new ActionListener() {
@@ -121,7 +119,7 @@ public class MainPage extends JFrame{
                 participants.add(userName);
                 participants.add(friend);
 
-                // ChatService kullanarak sohbet oluşturuluyor
+
                 ChatService chatService = new ChatService();
                 String chatId = chatService.createChat(participants);
                 if (chatId != null) {
@@ -136,17 +134,17 @@ public class MainPage extends JFrame{
         FriendList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Tıklanan index'i alıyoruz
+
                 int index = FriendList.locationToIndex(e.getPoint());
-                // Eğer tıklama geçerli bir index'e denk geliyorsa
+                // tıklanan index geçerli mi kontrol et
                 if (index >= 0) {
-                    // Tıklanan arkadaşın ismini alıyoruz
+                    // tıklanan ismi al
                     String selectedFriend = FriendList.getModel().getElementAt(index);
                     ChatService chatService = new ChatService();
-                    // ChatService kullanarak bu iki kullanıcı arasındaki sohbeti buluyoruz
+
                     String chatId = chatService.findChatIdByParticipants(userName, selectedFriend);
 
-                    // Eğer sohbet zaten varsa, sohbeti açıyoruz
+
 
                     Chat chat = new Chat(selectedFriend, userName, chatId);
                     chat.setVisible(true);

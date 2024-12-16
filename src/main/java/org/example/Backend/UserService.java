@@ -34,7 +34,7 @@ public class UserService {
         Document existingUser = userCollection.find(new Document("username", user.getUsername())).first();
         if (existingUser != null) {
             JOptionPane.showMessageDialog(null,"This username is already taken!","error",JOptionPane.PLAIN_MESSAGE);
-            return; // Metodu sonlandır
+            return;
         }
         if(Objects.equals(user.getUsername(), "")){
             JOptionPane.showMessageDialog(null,"Username cannot be empty!","error",JOptionPane.PLAIN_MESSAGE);
@@ -65,13 +65,14 @@ public class UserService {
     public boolean isUsernameExists(String username) {
         Document query = new Document("username", username);
         Document user = userCollection.find(query).first();
-        return user != null; // Kullanıcı bulunduysa true döner
+        return user != null; // user bulunduysa true döner
     }
     public boolean loginUser(String username, String password) {
         Document query = new Document("username", username).append("password", password);
         Document user = userCollection.find(query).first();
-        return user != null; // Kullanıcı bulunduysa true döner
+        return user != null; // user bulunduysa true döner üsttekinden farkı login kısmında şifre de doğruluyor
     }
+    //şifre değiştirme
     public void changePassword(String userName, String newPassword){
         Document query = new Document("username", userName);
         Document update = new Document("$set", new Document("password", newPassword));
@@ -80,40 +81,40 @@ public class UserService {
     }
 
     public void changeUserName(String userName, String newUserName) {
-        // Kullanıcı adını güncelle
+        // usernaem güncelle
         Document existingUser = userCollection.find(new Document("username", newUserName)).first();
         if (existingUser != null) {
             JOptionPane.showMessageDialog(null,"User has been successfully registered!","error",JOptionPane.PLAIN_MESSAGE);
             System.out.println("Error: This username already exists!");
-            return; // İşlemi sonlandır
+            return;
         }
         Document query = new Document("username", userName);
         Document update = new Document("$set", new Document("username", newUserName));
         userCollection.updateOne(query, update);
         System.out.println("Username has been successfully updated!");
 
-        // Diğer kullanıcıların arkadaş listelerini güncelle
+        // kullanıcıların arkadaş listelerini güncelle
         for (Document user : userCollection.find()) {
             List<String> friends = (List<String>) user.get("friends");
             if (friends != null && friends.contains(userName)) {
-                // Eski kullanıcı adını arkadaş listesinden çıkarıp yenisini ekle
+                // kullanıcı adını arkadaş listesinden çıkarıp yenisini ekle
                 friends.remove(userName);
                 friends.add(newUserName);
 
-                // Kullanıcı belgesini güncelle
+                // kullanıcı belgesini güncelle
                 Document friendUpdate = new Document("$set", new Document("friends", friends));
                 userCollection.updateOne(new Document("username", user.getString("username")), friendUpdate);
             }
         }
-        // Chats koleksiyonunda da participants listesini güncelle
+        // Chats koleksiyonundaki participants listesini de güncelle
         for (Document chat : chatCollection.find()) {
             List<String> participants = (List<String>) chat.get("participants");
             if (participants != null && participants.contains(userName)) {
-                // Eski kullanıcı adını participants listesinden çıkarıp yenisini ekle
+                // kullanıcı adını participants listesinden çıkarıp yenisini ekle
                 participants.remove(userName);
                 participants.add(newUserName);
 
-                // Chat belgesini güncelle
+                //Chat belgesini güncelle
                 Document chatUpdate = new Document("$set", new Document("participants", participants));
                 chatCollection.updateOne(new Document("_id", chat.get("_id")), chatUpdate);
             }
@@ -123,44 +124,44 @@ public class UserService {
     }
 
     public boolean deleteUser(String username) {
-        // Kullanıcıyı bulma
+        // user bulma
         Document query = new Document("username", username);
         Document user = userCollection.find(query).first();
 
         if (user != null) {
-            // 1. Kullanıcının arkadaş listesinden silinmesi
+            // 1. kullanıcının arkadaş listesinden silinmesi
             for (Document otherUser : userCollection.find()) {
                 List<String> friends = (List<String>) otherUser.get("friends");
                 if (friends != null && friends.contains(username)) {
-                    // Eski kullanıcı adı arkadaş listesinden çıkarılıyor
+                    // kullanıcı adı arkadaş listesinden çıkarılıyor
                     friends.remove(username);
 
-                    // Güncellenmiş arkadaş listesini kaydet
+                    // güncellenmiş arkadaş listesini kaydet
                     Document friendUpdate = new Document("$set", new Document("friends", friends));
                     userCollection.updateOne(new Document("username", otherUser.getString("username")), friendUpdate);
                 }
             }
 
-            // 2. Kullanıcıyı chat'lerden tamamen sil
+            // kullanıcıyı chat'lerden tamamen sil
             chatCollection.deleteMany(Filters.all("participants", username));
 
-            // 3. Kullanıcının silinmesi
+            // kullanıcınının silinmesi
             userCollection.deleteOne(query);
             System.out.println("User has been successfully deleted!");
 
-            return true;  // Başarıyla silindi
+            return true;
         }
 
-        return false;  // Kullanıcı bulunamadıysa false döner
+        return false;
     }
-
+    // arkadaş ekleme
     public void addFriend(String currentUser, String friendUsername) {
         Document query = new Document("username", currentUser);
         Document update = new Document("$addToSet", new Document("friends", friendUsername));
         userCollection.updateOne(query, update);
         System.out.println(friendUsername + " successfully added as a friend!");
     }
-
+    //arkadaş listesi alma
     public List<String> getFriendList(String currentUser) {
         Document query = new Document("username", currentUser);
         Document user = userCollection.find(query).first();

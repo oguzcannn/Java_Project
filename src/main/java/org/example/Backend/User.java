@@ -7,7 +7,7 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 
 
@@ -78,7 +78,7 @@ public class User implements UserInterface {
             return;
         }
 
-        // Arkadaş listesinden çıkar
+        // arkadaş listesinden çıkarma fonksiyonu
         List<String> friends = (List<String>) userDoc.get("friends");
         if (friends != null && friends.contains(friendUsername)) {
             friends.remove(friendUsername);
@@ -89,7 +89,7 @@ public class User implements UserInterface {
             return;
         }
 
-        // Karşı tarafın arkadaş listesinden de çıkar
+        // karşı tarafın arkadaş listesinden de çıkarmayı unutma
         Document friendDoc = userCollection.find(Filters.eq("username", friendUsername)).first();
         if (friendDoc != null) {
             List<String> friendList = (List<String>) friendDoc.get("friends");
@@ -100,7 +100,7 @@ public class User implements UserInterface {
             }
         }
 
-        // ChatId'yi bul ve sil
+        //  bulunduğu chatleri de sil
         List<String> participants = new ArrayList<>();
         participants.add(this.username);
         participants.add(friendUsername);

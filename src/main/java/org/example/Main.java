@@ -14,7 +14,7 @@ public class Main {
                  InstantiationException e) {
             throw new RuntimeException(e);
         }
-
+//login ekranı başlar
         SwingUtilities.invokeLater(() -> {
             Login login = new Login();
             login.setVisible(true);

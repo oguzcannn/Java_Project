@@ -29,37 +29,32 @@ public class AdminPanel  extends  JFrame{
                  InstantiationException e) {
             throw new RuntimeException(e);
         }
-        // UserService örneği oluşturuluyor
         UserService userService = new UserService();
 
-        // Veritabanındaki tüm kullanıcıları alıyoruz
         List<String> allUsers = userService.getAllUsers();
 
-        // List modelini oluşturuyoruz
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        // Kullanıcıları liste modeline ekliyoruz
+        //  listeye  ekleme
         for (String user : allUsers) {
             listModel.addElement(user);
         }
 
-        // userList'e DefaultListModel set ediliyor
         userList.setModel(listModel);
 
         Timer timer = new Timer(5000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Yeni kullanıcı listesini alıyoruz
                 List<String> updatedUsers = userService.getAllUsers();
 
-                // Yeni kullanıcıları ekliyoruz
+                // listeye yeni kullanıcıları ekliyor
                 for (String user : updatedUsers) {
                     if (!listModel.contains(user)) {
                         listModel.addElement(user);
                     }
                 }
 
-                // Silinen kullanıcıları listeden çıkarıyoruz
+                //  kullanıcıları listeden çıkarıyor
                 for (int i = 0; i < listModel.size(); i++) {
                     String user = listModel.get(i);
                     if (!updatedUsers.contains(user)) {
@@ -69,7 +64,7 @@ public class AdminPanel  extends  JFrame{
             }
         });
 
-        // Timer başlatılıyor
+
         timer.start();
         addWindowListener(new WindowAdapter() {
             @Override
@@ -86,7 +81,7 @@ public class AdminPanel  extends  JFrame{
             }
         });
 
-        // Kullanıcı adı değiştirme işlemi
+        // username  değiştirme işlemi
         userNameChangeBtn.addActionListener(e -> {
             String newUserName = userNameTextField.getText();
             String selectedUser = userList.getSelectedValue();
@@ -97,7 +92,7 @@ public class AdminPanel  extends  JFrame{
             userService.changeUserName(selectedUser, newUserName);
         });
 
-        // Kullanıcı şifresi değiştirme işlemi
+        //  şifre değiştirme işlemi
         userPasswordChangeBtn.addActionListener(e -> {
             String newPassword = userPasswordTextField.getText();
             String selectedUser = userList.getSelectedValue();

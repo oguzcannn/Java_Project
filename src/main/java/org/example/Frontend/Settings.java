@@ -1,6 +1,5 @@
 package org.example.Frontend;
 
-import org.example.Backend.Chat;
 import org.example.Backend.UserService;
 
 import javax.swing.*;
@@ -37,7 +36,7 @@ public class Settings extends JFrame{
                 String newPass = newpassText.getText();
                 String newPassAgain = newpassagainText.getText();
 
-                // Kontrolleri yapalım
+
                 if (currentPass.isEmpty() || newPass.isEmpty() || newPassAgain.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill in all the fields.", "error", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -74,12 +73,12 @@ public class Settings extends JFrame{
                 }
                 int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "delete account", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.YES_OPTION) {
-                    // Kullanıcıyı silelim
+
 
                     boolean success = userService.deleteUser(userName);
                     if (success) {
                         JOptionPane.showMessageDialog(null, "Are you sure you want to delete your account?", "Successful", JOptionPane.INFORMATION_MESSAGE);
-                        dispose();  // JFrame'i kapatalım
+                        dispose();
                         SwingUtilities.invokeLater(()->{
                             Login login = new Login();
                             login.setVisible(true);
