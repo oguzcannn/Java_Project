@@ -3,7 +3,7 @@ package org.example.Backend;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chat{
+public class Chat implements ChatInterface{
     private String chatId;
     private List<String> participants; // İki kullanıcı ID'si
     private List<Message> messages;

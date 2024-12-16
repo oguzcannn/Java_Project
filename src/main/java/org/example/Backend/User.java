@@ -11,7 +11,7 @@ import java.util.Objects;
 
 
 
-public class User {
+public class User implements UserInterface {
     private String username;
     private String userNumber;
     private String password;

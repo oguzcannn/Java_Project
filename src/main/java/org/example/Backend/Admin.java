@@ -8,7 +8,7 @@ import org.bson.Document;
 
 import java.util.List;
 
-public class Admin extends User {
+public class Admin extends User implements UserInterface {
     public Admin(String username, String userNumber, String password, String email) {
         super(username, userNumber, password, email);
     }

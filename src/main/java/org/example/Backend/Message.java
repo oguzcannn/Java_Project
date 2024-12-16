@@ -2,7 +2,7 @@ package org.example.Backend;
 
 import java.time.Instant;
 
-public class Message {
+public class Message implements MessageInterface {
     private String message_id;
     private String sender_id;
     private String receiver_id;
