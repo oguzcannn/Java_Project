@@ -50,10 +50,10 @@ Projenin temel işleyişi aşağıda adım adım açıklanmıştır:
 ## Kullanılan Teknolojiler
 
 Bu projede aşağıdaki teknolojiler kullanılmıştır:
-- **Java**: Projenin ana programlama dili olarak kullanılmıştır.
-- **Swing**: Kullanıcı arayüzü tasarımı için kullanılmıştır.
-- **MongoDB**: Veritabanı yönetimi için kullanılmıştır.
-- **Maven**: Projenin bağımlılık yönetimi için kullanılmıştır.
+- **Java**: Projenin ana dili olarak kullanılmıştır. Java, güçlü nesne yönelimli özellikleri ve geniş kütüphane desteğiyle uygulama geliştirmede sık tercih edilen bir dil.
+- **Swing**: Kullanıcı arayüzü tasarımı için tercih edilmiştir. Swing, Java'da GUI (Graphical User Interface) oluşturmak için kullanılan bir kütüphanedir ve masaüstü uygulamaları için etkileşimli ve zengin arayüzler sağlar.
+- **MongoDB Atlas**: veritabanlarını bulut üzerinde kolayca yönetebileceğiniz bir platform. Altyapı, yedekleme, güvenlik ve izleme gibi işlemler otomatik olarak yapılıyor, yani bunlarla uğraşmak zorunda kalmıyorsunuz. Ayrıca, yüksek performans sunuyor ve ihtiyaca göre kolayca ölçeklenebiliyor. Kısacası, veritabanınızı yönetmek çok daha basit ve pratik hale geliyor.
+- **Maven**: Projedeki bağımlılık yönetimi için kullanılmıştır. Maven, Java projelerinde dış kütüphanelerin ve yapılandırmaların yönetilmesine yardımcı olan bir araçtır, bu da projenin derlenmesini ve dağıtılmasını daha verimli hale getirir.
 
 ## Kurulum ve Çalıştırma Rehberi
 
@@ -79,11 +79,13 @@ Bu projede aşağıdaki teknolojiler kullanılmıştır:
 
 1. **Kullanıcı Girişi**
    - Uygulama açıldığında, giriş ekranına yönlendirilirsiniz. Burada kullanıcı adı ve şifrenizi girerek giriş yapabilirsiniz.
+   - Eğer uygulamaya kayıtlı değilseniz "Sign Up" butonuna tıklayarak kayıt olabileceğiniz ekrana yönlendirilirsiniz, burda kayıt olduktan sonra uygulamaya giriş yapabilirsiniz.
    - 'admin' kullanıcı adına sahip yeni bir kullanıcı oluşturarak, admin panele ulaşabilirsiniz. 
 
-2. **Arkadaş Ekleme**
+2. **Arkadaş Ekleme ve Silme**
+   - Arkadaşınızın kullanıcı adını girerek ekleme yadad silme işlemini gerçekleştirebilirsiniz.
    - Ana sayfada "Add Friend" butonuna tıklayarak yeni bir arkadaş ekleyebilirsiniz.
-   - Arkadaşınızın kullanıcı adını girerek ekleme işlemini gerçekleştirebilirsiniz.
+   - Ana sayfada "Remove Friend" butonuna tıklayarak mevcut olan arkadaşınızı silebilirsiniz.
 
 3. **Mesajlaşma**
    - Arkadaş listenizden birine tıklayarak sohbet ekranına geçebilirsiniz.
